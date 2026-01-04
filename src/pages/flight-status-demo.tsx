@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Plane, Clock, Bell, AlertTriangle, CheckCircle, RefreshCw } from 'lucide-react';
 
+type Notification = {
+  id: number;
+  flight: string;
+  message: string;
+  type: string;
+  time: Date;
+};
+
 const FlightStatusDemo = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
     const timer = setInterval(() => {
