@@ -68,7 +68,7 @@ const SeatSelectionDemo = () => {
     { id: '502', type: 'presidential', view: 'ocean', status: 'maintenance', price: 35000 }
   ];
 
-  const getSeatColor = (status, seatClass) => {
+  const getSeatColor = (status: string, seatClass: string) => {
     if (status === 'selected') return 'bg-blue-600 text-white';
     if (status === 'occupied') return 'bg-red-400 text-white';
     if (status === 'blocked') return 'bg-gray-400 text-white';
@@ -80,7 +80,7 @@ const SeatSelectionDemo = () => {
     }
   };
 
-  const getRoomColor = (status, roomType) => {
+  const getRoomColor = (status: string, roomType: string) => {
     if (status === 'selected') return 'bg-blue-600 text-white';
     if (status === 'occupied') return 'bg-red-400 text-white';
     if (status === 'maintenance') return 'bg-gray-400 text-white';
@@ -263,9 +263,9 @@ const SeatSelectionDemo = () => {
                             </div>
                           </div>
                           <div className="text-right">
-                            {seat?.price > 0 ? (
+                            {(seat?.price ?? 0) > 0 ? (
                               <div className="text-lg font-bold text-green-600">
-                                +₹{seat.price.toLocaleString()}
+                                +₹{seat?.price?.toLocaleString()}
                               </div>
                             ) : (
                               <div className="text-lg font-bold text-gray-600">Included</div>
@@ -416,9 +416,9 @@ const SeatSelectionDemo = () => {
                             </div>
                           </div>
                           <div className="text-right">
-                            {room?.price > 0 ? (
+                            {(room?.price ?? 0) > 0 ? (
                               <div className="text-lg font-bold text-green-600">
-                                +₹{room.price.toLocaleString()}
+                                +₹{room?.price?.toLocaleString()}
                               </div>
                             ) : (
                               <div className="text-lg font-bold text-gray-600">Included</div>

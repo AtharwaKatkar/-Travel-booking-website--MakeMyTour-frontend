@@ -4,9 +4,39 @@ import { Sparkles, Brain, TrendingUp, Users, Target, BarChart3, Lightbulb } from
 import RecommendationCard from '../components/Recommendations/RecommendationCard';
 import { mockRecommendations, recommendationsAPI } from '../api/recommendations';
 
+type RecommendationReason = {
+  type: string;
+  description: string;
+  confidence: number;
+  details: any; // Using any to allow flexible details structure
+};
+
+type Recommendation = {
+  id: string;
+  userId: string;
+  itemType: string;
+  itemId: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  price: number;
+  originalPrice: number;
+  rating: number;
+  reviewCount: number;
+  location: string;
+  highlights: string[];
+  reasons: RecommendationReason[];
+  score: number;
+  category: string;
+  metadata: any;
+  isActive: boolean;
+  createdAt: Date;
+  expiresAt: Date;
+};
+
 const RecommendationsDemoPage = () => {
   const [activeDemo, setActiveDemo] = useState('personalized');
-  const [demoRecommendations, setDemoRecommendations] = useState([]);
+  const [demoRecommendations, setDemoRecommendations] = useState<Recommendation[]>([]);
   const [userProfile, setUserProfile] = useState({
     preferences: ['beach', 'luxury', 'international'],
     travelStyle: 'mid-range',
@@ -49,7 +79,7 @@ const RecommendationsDemoPage = () => {
   }, [activeDemo]);
 
   const loadDemoRecommendations = () => {
-    let filteredRecs = [...mockRecommendations];
+    let filteredRecs: Recommendation[] = [...mockRecommendations] as Recommendation[];
     
     switch (activeDemo) {
       case 'personalized':
@@ -67,7 +97,7 @@ const RecommendationsDemoPage = () => {
               matchedPreferences: ['beach', 'luxury']
             }
           }]
-        }));
+        })) as Recommendation[];
         break;
       case 'trending':
         filteredRecs = filteredRecs.map(rec => ({
@@ -81,7 +111,7 @@ const RecommendationsDemoPage = () => {
               trendingScore: Math.floor(Math.random() * 50) + 70
             }
           }]
-        }));
+        })) as Recommendation[];
         break;
       case 'ai-insights':
         filteredRecs = filteredRecs.map(rec => ({
@@ -104,31 +134,31 @@ const RecommendationsDemoPage = () => {
               }
             }
           ]
-        }));
+        })) as Recommendation[];
         break;
     }
     
     setDemoRecommendations(filteredRecs);
   };
 
-  const handleFeedback = async (feedback) => {
+  const handleFeedback = async (feedback: any) => {
     console.log('Demo feedback:', feedback);
     // In demo mode, just log the feedback
   };
 
-  const handleInteraction = async (interaction) => {
+  const handleInteraction = async (interaction: any) => {
     console.log('Demo interaction:', interaction);
     // In demo mode, just log the interaction
   };
 
-  const getColorClasses = (color) => {
+  const getColorClasses = (color: string) => {
     const colors = {
       blue: 'bg-blue-600 hover:bg-blue-700 text-white',
       green: 'bg-green-600 hover:bg-green-700 text-white',
       red: 'bg-red-600 hover:bg-red-700 text-white',
       purple: 'bg-purple-600 hover:bg-purple-700 text-white'
     };
-    return colors[color] || colors.blue;
+    return colors[color as keyof typeof colors] || colors.blue;
   };
 
   return (

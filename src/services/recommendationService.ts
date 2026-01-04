@@ -1,4 +1,5 @@
 import { getDatabase } from '../lib/mongodb';
+import { ObjectId } from 'mongodb';
 import { 
   UserProfile, 
   UserInteraction, 
@@ -12,7 +13,6 @@ import {
   UserPreference,
   DestinationInsight
 } from '../models/Recommendations';
-import { ObjectId } from 'mongodb';
 
 const USER_PROFILES_COLLECTION = 'user_profiles';
 const USER_INTERACTIONS_COLLECTION = 'user_interactions';
@@ -228,7 +228,7 @@ export class RecommendationService {
   }
 
   // Create initial user profile
-  private async createInitialUserProfile(userId: string): Promise<UserProfile> {
+  private async createInitialUserProfile(userId: string): Promise<UserProfile & { _id: ObjectId }> {
     const collection = await this.getUserProfilesCollection();
     
     const profile: UserProfile = {
@@ -246,8 +246,9 @@ export class RecommendationService {
       updatedAt: new Date()
     };
 
-    await collection.insertOne(profile);
-    return profile;
+    const result = await collection.insertOne(profile);
+    const insertedProfile = await collection.findOne({ _id: result.insertedId });
+    return insertedProfile!;
   }
 
   // Generate personalized recommendations
@@ -336,10 +337,14 @@ export class RecommendationService {
         
         recommendations.push({
           ...rec,
+          id: `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           userId: userProfile.userId,
           reasons,
           score: this.calculatePersonalizedScore(rec, preference),
-          category: 'personalized'
+          category: 'personalized',
+          isActive: true,
+          createdAt: new Date(),
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
         });
       });
     });
@@ -377,10 +382,14 @@ export class RecommendationService {
         
         recommendations.push({
           ...rec,
+          id: `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           userId,
           reasons,
           score: this.calculateCollaborativeScore(rec, similarUser.similarity),
-          category: 'personalized'
+          category: 'personalized',
+          isActive: true,
+          createdAt: new Date(),
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
         });
       });
     });
@@ -396,9 +405,10 @@ export class RecommendationService {
       .filter(rec => !itemType || rec.itemType === itemType)
       .map(rec => ({
         ...rec,
+        id: `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         userId: 'anonymous',
         reasons: [{
-          type: 'trending',
+          type: 'trending' as const,
           description: 'Popular destination trending now',
           confidence: 0.8,
           details: {
@@ -406,7 +416,10 @@ export class RecommendationService {
           }
         }],
         score: Math.random() * 100,
-        category: 'trending' as const
+        category: 'trending' as const,
+        isActive: true,
+        createdAt: new Date(),
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
       }))
       .slice(0, count);
   }
@@ -419,9 +432,10 @@ export class RecommendationService {
       .filter(rec => rec.originalPrice && rec.originalPrice > rec.price)
       .map(rec => ({
         ...rec,
+        id: `rec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         userId: userProfile.userId,
         reasons: [{
-          type: 'price_match',
+          type: 'price_match' as const,
           description: `Great deal - ${Math.round(((rec.originalPrice! - rec.price) / rec.originalPrice!) * 100)}% off`,
           confidence: 0.9,
           details: {
@@ -429,7 +443,10 @@ export class RecommendationService {
           }
         }],
         score: ((rec.originalPrice! - rec.price) / rec.originalPrice!) * 100,
-        category: 'deals' as const
+        category: 'deals' as const,
+        isActive: true,
+        createdAt: new Date(),
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
       }))
       .slice(0, count);
   }

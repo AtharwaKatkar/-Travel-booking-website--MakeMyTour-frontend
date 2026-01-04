@@ -486,7 +486,7 @@ export class PricingService {
   }
 
   // Private helper methods
-  private async createInitialFlightPricing(flightId: string, departureDate: string): Promise<FlightPricing> {
+  private async createInitialFlightPricing(flightId: string, departureDate: string): Promise<FlightPricing & { _id: ObjectId }> {
     const collection = await this.getFlightPricingCollection();
     
     // Mock flight data
@@ -535,11 +535,12 @@ export class PricingService {
       updatedAt: now
     };
 
-    await collection.insertOne(pricing);
-    return pricing;
+    const result = await collection.insertOne(pricing);
+    const insertedPricing = await collection.findOne({ _id: result.insertedId });
+    return insertedPricing!;
   }
 
-  private async createInitialHotelPricing(hotelId: string, checkInDate: string, checkOutDate: string): Promise<HotelPricing> {
+  private async createInitialHotelPricing(hotelId: string, checkInDate: string, checkOutDate: string): Promise<HotelPricing & { _id: ObjectId }> {
     const collection = await this.getHotelPricingCollection();
     
     const mockHotels = [
@@ -588,11 +589,12 @@ export class PricingService {
       updatedAt: now
     };
 
-    await collection.insertOne(pricing);
-    return pricing;
+    const result = await collection.insertOne(pricing);
+    const insertedPricing = await collection.findOne({ _id: result.insertedId });
+    return insertedPricing!;
   }
 
-  private async updateFlightPricing(pricing: FlightPricing): Promise<FlightPricing> {
+  private async updateFlightPricing(pricing: FlightPricing & { _id: ObjectId }): Promise<FlightPricing & { _id: ObjectId }> {
     const collection = await this.getFlightPricingCollection();
     
     // Simulate booking activity (reduce available seats)
@@ -652,10 +654,11 @@ export class PricingService {
       { $set: updatedPricing }
     );
 
-    return updatedPricing;
+    const result = await collection.findOne({ _id: pricing._id });
+    return result!;
   }
 
-  private async updateHotelPricing(pricing: HotelPricing): Promise<HotelPricing> {
+  private async updateHotelPricing(pricing: HotelPricing & { _id: ObjectId }): Promise<HotelPricing & { _id: ObjectId }> {
     const collection = await this.getHotelPricingCollection();
     
     const newBookings = Math.floor(Math.random() * 3);
@@ -712,7 +715,8 @@ export class PricingService {
       { $set: updatedPricing }
     );
 
-    return updatedPricing;
+    const result = await collection.findOne({ _id: pricing._id });
+    return result!;
   }
 
   // Initialize sample pricing data

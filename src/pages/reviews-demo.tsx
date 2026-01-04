@@ -12,8 +12,10 @@ import {
   Flag
 } from 'lucide-react';
 
+type TabType = 'hotel' | 'flight';
+
 const ReviewsDemo = () => {
-  const [selectedTab, setSelectedTab] = useState('hotel');
+  const [selectedTab, setSelectedTab] = useState<TabType>('hotel');
 
   const demoStats = {
     hotel: {
@@ -88,7 +90,7 @@ const ReviewsDemo = () => {
   const currentStats = demoStats[selectedTab];
   const currentReviews = demoReviews[selectedTab];
 
-  const renderStars = (rating) => {
+  const renderStars = (rating: number) => {
     return [...Array(5)].map((_, index) => (
       <Star
         key={index}
@@ -101,7 +103,7 @@ const ReviewsDemo = () => {
     ));
   };
 
-  const getBarWidth = (count) => {
+  const getBarWidth = (count: number) => {
     return currentStats.totalReviews > 0 ? (count / currentStats.totalReviews) * 100 : 0;
   };
 
@@ -182,13 +184,13 @@ const ReviewsDemo = () => {
                         <div className="flex-1 bg-gray-200 rounded-full h-2">
                           <div
                             className="bg-yellow-400 h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${getBarWidth(currentStats.distribution[rating])}%` }}
+                            style={{ width: `${getBarWidth(currentStats.distribution[rating as keyof typeof currentStats.distribution])}%` }}
                           ></div>
                         </div>
                         
                         <div className="w-12 text-right">
                           <span className="text-sm text-gray-600">
-                            {currentStats.distribution[rating]}
+                            {currentStats.distribution[rating as keyof typeof currentStats.distribution]}
                           </span>
                         </div>
                       </div>

@@ -78,7 +78,7 @@ const FlightStatusDemo = () => {
     }
   ];
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'ON_TIME': return 'text-green-600 bg-green-50 border-green-200';
       case 'DELAYED': return 'text-orange-600 bg-orange-50 border-orange-200';
@@ -87,7 +87,7 @@ const FlightStatusDemo = () => {
     }
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status: string) => {
     switch (status) {
       case 'ON_TIME': return <CheckCircle className="w-4 h-4" />;
       case 'DELAYED': return <AlertTriangle className="w-4 h-4" />;

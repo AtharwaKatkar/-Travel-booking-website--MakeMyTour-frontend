@@ -159,7 +159,7 @@ export interface DestinationInsight {
 export interface RecommendationRequest {
   userId: string;
   count?: number;
-  category?: 'personalized' | 'trending' | 'deals' | 'seasonal';
+  category?: 'personalized' | 'trending' | 'deals' | 'seasonal' | 'collaborative';
   itemType?: 'flight' | 'hotel' | 'destination' | 'package';
   filters?: {
     priceRange?: { min: number; max: number };

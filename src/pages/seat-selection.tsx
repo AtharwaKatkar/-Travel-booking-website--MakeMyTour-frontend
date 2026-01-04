@@ -25,7 +25,7 @@ const SeatSelection = () => {
     router.back();
   };
 
-  const handleComplete = (selectionData) => {
+  const handleComplete = (selectionData: any) => {
     console.log('Selection completed:', selectionData);
     // In real app, proceed to payment or booking confirmation
     router.push('/booking-confirmation');
