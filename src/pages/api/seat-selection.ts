@@ -228,7 +228,7 @@ function getRoomTypeName(type: string) {
     suite: "Executive Suite",
     presidential: "Presidential Suite"
   };
-  return names[type] || "Standard Room";
+  return names[type as keyof typeof names] || "Standard Room";
 }
 
 function getRoomSize(type: string) {
@@ -238,7 +238,7 @@ function getRoomSize(type: string) {
     suite: "60 sqm", 
     presidential: "120 sqm"
   };
-  return sizes[type] || "25 sqm";
+  return sizes[type as keyof typeof sizes] || "25 sqm";
 }
 
 function getRoomAmenities(type: string) {
